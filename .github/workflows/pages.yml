@@ -3,19 +3,26 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Validate required site files
         run: |
           test -s index.html
@@ -23,16 +30,20 @@ jobs:
           test -s styles.css
           grep -q './styles.css' index.html
           grep -q './app.js' index.html
+
       - name: Check JavaScript syntax
         run: node --check app.js
+
+      # GitHub Pages must be enabled once in repository Settings.
+      # Set Build and deployment > Source to "GitHub Actions".
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
+
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
