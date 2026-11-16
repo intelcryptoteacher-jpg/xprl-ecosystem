@@ -34,10 +34,10 @@ jobs:
       - name: Check JavaScript syntax
         run: node --check app.js
 
-      # GitHub Pages must be enabled once in repository Settings.
-      # Set Build and deployment > Source to "GitHub Actions".
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v3
